@@ -20,21 +20,36 @@ The script currently supports the following panels (availability depends on your
 
 1. **cPanel/WHM** (Commercial)
 2. **Plesk Panel** (Commercial)
-3. **aaPanel** (Free)
-4. **CyberPanel** (Free - OpenLiteSpeed)
-5. **CloudPanel** (Free)
-6. **Webmin** (Free - Lightweight)
-7. **VestaCP** (Free)
-8. **HestiaCP** (Free - VestaCP Fork)
-9. **CentOS Web Panel / CWP** (Free)
-10. **ISPConfig** (Free)
-11. **Ajenti** (Free)
+3. **Webuzo** (Commercial)
+4. **DirectAdmin** (Commercial)
+5. **InterWorx** (Commercial)
+6. **ISPmanager** (Commercial)
+7. **FASTPANEL** (Free/Commercial)
+8. **Enhance** (Commercial)
+9. **ApisCP** (Commercial)
+10. **Virtualmin Pro** (Commercial)
+11. **aaPanel** (Free)
+12. **CyberPanel** (Free - OpenLiteSpeed)
+13. **CloudPanel** (Free)
+14. **Webmin** (Free - Lightweight)
+15. **VestaCP** (Free)
+16. **HestiaCP** (Free - VestaCP Fork)
+17. **CentOS Web Panel / CWP** (Free/Pro)
+18. **ISPConfig** (Free)
+19. **Ajenti** (Free)
+20. **1Panel** (Free)
+21. **OpenPanel** (Free)
+22. **Coolify** (Free)
+23. **Easypanel** (Free)
+24. **YunoHost** (Free)
 
 ## Requirements
 
 - A fresh Unix-like minimal OS installation (Ubuntu, Debian, CentOS, AlmaLinux, or Rocky Linux).
 - Root privileges.
 - An active internet connection.
+
+For detailed hardware and OS requirements for each specific control panel, please refer to the [System Requirements](requirement.md) document.
 
 ## Usage
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# pist.sh - VPS Control Panel Auto Installer v1.0
+# pist.sh - VPS Control Panel Auto Installer v1.1
 # Supports Quick Mode (non-interactive) and Normal Mode (interactive)
 
 RED='\033[0;31m'
@@ -9,19 +9,21 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 CYAN='\033[0;36m'
 MAGENTA='\033[0;35m'
+BOLD='\033[1m'
 NC='\033[0m'
 
 INSTALL_MODE=""
 DETECTED_PANELS=()
 IS_FRESH=true
+PANEL_FILTER=""   # "free", "paid", or "all"
 
 print_banner() {
     clear
     echo -e "${CYAN}"
     echo "╔════════════════════════════════════════════════════════════╗"
-    echo "║        pist.sh VPS Control Panel Auto Installer v1.0       ║"
-    echo "║     One Script, Multiple Panels — Quick & Normal Mode      ║"
-    echo "║     Repository: https://github.com/mnasikin/pist.sh        ║"
+    echo "║      pist.sh — VPS Control Panel Auto Installer v1.1      ║"
+    echo "║     One Script, Multiple Panels — Quick & Normal Mode     ║"
+    echo "║     Repository: https://github.com/mnasikin/pist.sh       ║"
     echo "╚════════════════════════════════════════════════════════════╝"
     echo -e "${NC}"
 }
@@ -65,90 +67,90 @@ detect_existing_panels() {
     DETECTED_PANELS=()
     IS_FRESH=true
 
-    # cPanel
     if [[ -f /usr/local/cpanel/cpanel ]] || systemctl is-active --quiet cpanel 2>/dev/null; then
-        DETECTED_PANELS+=("cPanel/WHM")
-        IS_FRESH=false
+        DETECTED_PANELS+=("cPanel/WHM"); IS_FRESH=false
     fi
-
-    # Plesk
     if [[ -f /usr/local/psa/version ]] || command -v plesk &>/dev/null; then
-        DETECTED_PANELS+=("Plesk")
-        IS_FRESH=false
+        DETECTED_PANELS+=("Plesk"); IS_FRESH=false
     fi
-
-    # aaPanel
     if [[ -f /www/server/panel/BT-Panel ]] || [[ -d /www/server/panel ]]; then
-        DETECTED_PANELS+=("aaPanel")
-        IS_FRESH=false
+        DETECTED_PANELS+=("aaPanel"); IS_FRESH=false
     fi
-
-    # CyberPanel
     if [[ -f /usr/local/CyberCP/CyberCP/settings.py ]] || command -v cyberpanel &>/dev/null; then
-        DETECTED_PANELS+=("CyberPanel")
-        IS_FRESH=false
+        DETECTED_PANELS+=("CyberPanel"); IS_FRESH=false
     fi
-
-    # CloudPanel
     if [[ -f /etc/clp/version ]] || [[ -d /home/clp ]]; then
-        DETECTED_PANELS+=("CloudPanel")
-        IS_FRESH=false
+        DETECTED_PANELS+=("CloudPanel"); IS_FRESH=false
     fi
-
-    # Webmin
     if systemctl is-active --quiet webmin 2>/dev/null || [[ -f /etc/webmin/version ]]; then
-        DETECTED_PANELS+=("Webmin")
-        IS_FRESH=false
+        DETECTED_PANELS+=("Webmin"); IS_FRESH=false
     fi
-
-    # VestaCP
     if [[ -d /usr/local/vesta ]] || command -v v-list-users &>/dev/null; then
-        DETECTED_PANELS+=("VestaCP")
-        IS_FRESH=false
+        DETECTED_PANELS+=("VestaCP"); IS_FRESH=false
     fi
-
-    # HestiaCP
     if [[ -d /usr/local/hestia ]] || command -v v-add-user &>/dev/null && [[ -f /usr/local/hestia/conf/hestia.conf ]]; then
-        DETECTED_PANELS+=("HestiaCP")
-        IS_FRESH=false
+        DETECTED_PANELS+=("HestiaCP"); IS_FRESH=false
     fi
-
-    # CWP
     if [[ -d /usr/local/cwpsrv ]] || [[ -f /usr/local/cwp/.conf ]]; then
-        DETECTED_PANELS+=("CentOS Web Panel (CWP)")
-        IS_FRESH=false
+        DETECTED_PANELS+=("CentOS Web Panel (CWP)"); IS_FRESH=false
     fi
-
-    # ISPConfig
     if [[ -d /usr/local/ispconfig ]] || [[ -f /usr/local/ispconfig/interface/lib/config.inc.php ]]; then
-        DETECTED_PANELS+=("ISPConfig")
-        IS_FRESH=false
+        DETECTED_PANELS+=("ISPConfig"); IS_FRESH=false
     fi
-
-    # Ajenti
     if systemctl is-active --quiet ajenti 2>/dev/null || command -v ajenti-panel &>/dev/null; then
-        DETECTED_PANELS+=("Ajenti")
-        IS_FRESH=false
+        DETECTED_PANELS+=("Ajenti"); IS_FRESH=false
+    fi
+    if [[ -d /opt/1panel ]] || [[ -f /usr/bin/1pctl ]]; then
+        DETECTED_PANELS+=("1Panel"); IS_FRESH=false
+    fi
+    if [[ -f /usr/local/webuzo/main/conf/webuzo.conf ]] || [[ -d /usr/local/webuzo ]]; then
+        DETECTED_PANELS+=("Webuzo"); IS_FRESH=false
+    fi
+    if [[ -d /usr/local/directadmin ]] || [[ -f /usr/local/directadmin/directadmin ]]; then
+        DETECTED_PANELS+=("DirectAdmin"); IS_FRESH=false
+    fi
+    if [[ -d /usr/local/interworx ]] || systemctl is-active --quiet iworx 2>/dev/null; then
+        DETECTED_PANELS+=("InterWorx"); IS_FRESH=false
+    fi
+    if [[ -d /usr/local/mgr5 ]] || [[ -f /usr/local/mgr5/bin/core ]]; then
+        DETECTED_PANELS+=("ISPmanager"); IS_FRESH=false
+    fi
+    if [[ -d /usr/local/fastpanel2 ]] || command -v fastpanel &>/dev/null; then
+        DETECTED_PANELS+=("FASTPANEL"); IS_FRESH=false
+    fi
+    if [[ -d /root/.enhance ]] || command -v enhance &>/dev/null; then
+        DETECTED_PANELS+=("Enhance"); IS_FRESH=false
+    fi
+    if [[ -d /usr/local/apiscp ]] || command -v upcp &>/dev/null; then
+        DETECTED_PANELS+=("ApisCP"); IS_FRESH=false
+    fi
+    if [[ -d /etc/virtualmin-benchmark ]] || [[ -f /usr/sbin/virtualmin ]]; then
+        DETECTED_PANELS+=("Virtualmin"); IS_FRESH=false
+    fi
+    if [[ -d /usr/local/openpanel ]] || command -v openpanel &>/dev/null; then
+        DETECTED_PANELS+=("OpenPanel"); IS_FRESH=false
+    fi
+    if [[ -d /data/coolify ]] || docker ps -a | grep -q coolify 2>/dev/null; then
+        DETECTED_PANELS+=("Coolify"); IS_FRESH=false
+    fi
+    if [[ -d /etc/easypanel ]] || docker ps -a | grep -q easypanel 2>/dev/null; then
+        DETECTED_PANELS+=("Easypanel"); IS_FRESH=false
+    fi
+    if [[ -f /etc/yunohost/version ]] || command -v yunohost &>/dev/null; then
+        DETECTED_PANELS+=("YunoHost"); IS_FRESH=false
     fi
 
-    # Detect common web stacks (no panel, but not fresh)
     STACK_FOUND=()
-    command -v nginx &>/dev/null && STACK_FOUND+=("Nginx")
-    command -v apache2 &>/dev/null && STACK_FOUND+=("Apache2")
-    command -v httpd &>/dev/null && STACK_FOUND+=("Apache/httpd")
-    command -v mysql &>/dev/null && STACK_FOUND+=("MySQL")
-    command -v mariadb &>/dev/null && STACK_FOUND+=("MariaDB")
-    command -v php &>/dev/null && STACK_FOUND+=("PHP")
-    command -v docker &>/dev/null && STACK_FOUND+=("Docker")
-
-    if [[ ${#STACK_FOUND[@]} -gt 0 ]]; then
-        IS_FRESH=false
-    fi
+    command -v nginx    &>/dev/null && STACK_FOUND+=("Nginx")
+    command -v apache2  &>/dev/null && STACK_FOUND+=("Apache2")
+    command -v httpd    &>/dev/null && STACK_FOUND+=("Apache/httpd")
+    command -v mysql    &>/dev/null && STACK_FOUND+=("MySQL")
+    command -v mariadb  &>/dev/null && STACK_FOUND+=("MariaDB")
+    command -v php      &>/dev/null && STACK_FOUND+=("PHP")
+    command -v docker   &>/dev/null && STACK_FOUND+=("Docker")
+    [[ ${#STACK_FOUND[@]} -gt 0 ]] && IS_FRESH=false
 }
 
-# ─────────────────────────────────────────────────────────────
-# Display installation status
-# ─────────────────────────────────────────────────────────────
 display_install_status() {
     echo -e "${GREEN}╔════════════════════════════════════════════════════════════╗"
     echo -e "║               INSTALLATION STATUS CHECK                    ║"
@@ -170,7 +172,6 @@ display_install_status() {
             echo -e "  Status  : ${YELLOW}⚠  Not Fresh — Existing web stack detected${NC}"
             echo -e "  Risk    : ${YELLOW}Medium — A web stack is already installed (no panel detected)${NC}"
         fi
-
         if [[ ${#STACK_FOUND[@]} -gt 0 ]]; then
             echo ""
             echo -e "  ${YELLOW}Detected Web Stack:${NC}"
@@ -179,7 +180,6 @@ display_install_status() {
             done
         fi
     fi
-
     echo ""
 }
 
@@ -198,13 +198,8 @@ display_specs() {
     echo ""
 }
 
-# ─────────────────────────────────────────────────────────────
-# Warn if not fresh and prompt to continue
-# ─────────────────────────────────────────────────────────────
 warn_if_not_fresh() {
-    if [[ "$IS_FRESH" == true ]]; then
-        return 0
-    fi
+    if [[ "$IS_FRESH" == true ]]; then return 0; fi
 
     if [[ ${#DETECTED_PANELS[@]} -gt 0 ]]; then
         echo -e "${RED}╔════════════════════════════════════════════════════════════╗"
@@ -241,68 +236,179 @@ warn_if_not_fresh() {
     fi
 }
 
+# ─────────────────────────────────────────────────────────────
+# Prompt: Free or Paid filter
+# ─────────────────────────────────────────────────────────────
+choose_panel_filter() {
+    echo -e "${GREEN}╔════════════════════════════════════════════════════════════╗"
+    echo -e "║              SELECT PANEL PRICING PREFERENCE               ║"
+    echo -e "╚════════════════════════════════════════════════════════════╝${NC}"
+    echo ""
+    echo -e "  ${YELLOW}[1]${NC} ${GREEN}Free Panels${NC}    — aaPanel, CyberPanel, CloudPanel, Webmin, VestaCP,"
+    echo -e "                    HestiaCP, CWP, ISPConfig, Ajenti, 1Panel, OpenPanel,"
+    echo -e "                    Coolify, Easypanel, YunoHost"
+    echo ""
+    echo -e "  ${YELLOW}[2]${NC} ${RED}Paid Panels${NC}    — cPanel, Plesk, Webuzo, DirectAdmin, InterWorx,"
+    echo -e "                    ISPmanager, FASTPANEL, Enhance, ApisCP, Virtualmin Pro"
+    echo -e "                    ${MAGENTA}(License / subscription may be required)${NC}"
+    echo ""
+    echo -e "  ${YELLOW}[3]${NC} ${CYAN}Show All${NC}       — Display all compatible panels"
+    echo ""
+    read -p "  Your choice (1/2/3) [default: 3]: " filter_choice
+
+    case "$filter_choice" in
+        1) PANEL_FILTER="free" ;;
+        2) PANEL_FILTER="paid" ;;
+        *) PANEL_FILTER="all"  ;;
+    esac
+
+    echo ""
+}
+
 check_compatibility() {
     declare -gA PANELS
+    declare -gA PANEL_TYPE   # key -> "free" or "paid"
 
-    if [[ "$OS" =~ ^(centos|almalinux|rocky)$ ]] && [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]]; then
-        PANELS["cpanel"]="cPanel/WHM (Commercial - License Required)|min: 1 Core, 1GB RAM, 20GB Disk|CentOS/AlmaLinux/Rocky"
+    # --- PAID ---
+    if [[ "$OS" =~ ^(centos|almalinux|rocky)$ ]] && [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 20 ]]; then
+        PANELS["cpanel"]="cPanel/WHM|min: 1 Core, 1GB RAM, 20GB Disk|CentOS/AlmaLinux/Rocky"
+        PANEL_TYPE["cpanel"]="paid"
     fi
-
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 4 ]]; then
         if [[ "$OS" =~ ^(centos|ubuntu|debian|almalinux|rocky)$ ]]; then
-            PANELS["plesk"]="Plesk Panel (Commercial - Trial Available)|min: 1 Core, 1GB RAM, 4GB Disk|Multi-OS"
+            PANELS["plesk"]="Plesk|min: 1 Core, 1GB RAM, 4GB Disk|Multi-OS"
+            PANEL_TYPE["plesk"]="paid"
+        fi
+    fi
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 5 ]]; then
+        if [[ "$OS" =~ ^(centos|ubuntu|almalinux|rocky)$ ]]; then
+            PANELS["webuzo"]="Webuzo|min: 1 Core, 1GB RAM, 5GB Disk|Ubuntu/CentOS/AlmaLinux/Rocky"
+            PANEL_TYPE["webuzo"]="paid"
+        fi
+    fi
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 2 ]]; then
+        if [[ "$OS" =~ ^(centos|ubuntu|almalinux|rocky|debian)$ ]]; then
+            PANELS["directadmin"]="DirectAdmin|min: 1 Core, 1GB RAM, 2GB Disk|Multi-OS"
+            PANEL_TYPE["directadmin"]="paid"
+        fi
+    fi
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+        if [[ "$OS" =~ ^(centos|almalinux|rocky)$ ]]; then
+            PANELS["interworx"]="InterWorx|min: 1 Core, 1GB RAM, 10GB Disk|RHEL/CentOS/Alma/Rocky"
+            PANEL_TYPE["interworx"]="paid"
+        fi
+    fi
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+        if [[ "$OS" =~ ^(ubuntu|debian|almalinux|rocky)$ ]]; then
+            PANELS["ispmanager"]="ISPmanager|min: 1 Core, 1GB RAM, 10GB Disk|Ubuntu/Debian/Alma/Rocky"
+            PANEL_TYPE["ispmanager"]="paid"
+        fi
+    fi
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+        if [[ "$OS" =~ ^(ubuntu|debian|centos|almalinux|rocky|debian)$ ]]; then
+            PANELS["fastpanel"]="FASTPANEL|min: 1 Core, 1GB RAM, 10GB Disk|Multi-OS"
+            PANEL_TYPE["fastpanel"]="paid"
+        fi
+    fi
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 2048 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+        if [[ "$OS" == "ubuntu" ]]; then
+            PANELS["enhance"]="Enhance|min: 1 Core, 2GB RAM, 10GB Disk|Ubuntu Only (Docker)"
+            PANEL_TYPE["enhance"]="paid"
+        fi
+    fi
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 2048 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+        if [[ "$OS" =~ ^(centos|almalinux|rocky)$ ]]; then
+            PANELS["apiscp"]="ApisCP|min: 1 Core, 2GB RAM, 10GB Disk|RHEL/CentOS/Alma/Rocky"
+            PANEL_TYPE["apiscp"]="paid"
+        fi
+    fi
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+        if [[ "$OS" =~ ^(ubuntu|debian|centos|almalinux|rocky)$ ]]; then
+            PANELS["virtualmin"]="Virtualmin Pro|min: 1 Core, 1GB RAM, 10GB Disk|Multi-OS"
+            PANEL_TYPE["virtualmin"]="paid"
         fi
     fi
 
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 512 ]]; then
+    # --- FREE ---
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 512 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
         if [[ "$OS" =~ ^(centos|ubuntu|debian|almalinux|rocky)$ ]]; then
-            PANELS["aapanel"]="aaPanel (Free)|min: 1 Core, 512MB RAM, 10GB Disk|Ubuntu/Debian/CentOS/AlmaLinux/Rocky"
+            PANELS["aapanel"]="aaPanel|min: 1 Core, 512MB RAM, 10GB Disk|Ubuntu/Debian/CentOS/AlmaLinux/Rocky"
+            PANEL_TYPE["aapanel"]="free"
         fi
     fi
-
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
         if [[ "$OS" =~ ^(centos|ubuntu|almalinux)$ ]]; then
-            PANELS["cyberpanel"]="CyberPanel (Free - OpenLiteSpeed)|min: 1 Core, 1GB RAM, 10GB Disk|Ubuntu/CentOS/AlmaLinux"
+            PANELS["cyberpanel"]="CyberPanel|min: 1 Core, 1GB RAM, 10GB Disk|Ubuntu/CentOS/AlmaLinux"
+            PANEL_TYPE["cyberpanel"]="free"
         fi
     fi
-
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 2048 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 2048 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
         if [[ "$OS" == "ubuntu" || "$OS" == "debian" ]]; then
-            PANELS["cloudpanel"]="CloudPanel (Free - Modern)|min: 1 Core, 2GB RAM, 10GB Disk|Ubuntu 22.04/24.04, Debian 11/12"
+            PANELS["cloudpanel"]="CloudPanel|min: 1 Core, 2GB RAM, 10GB Disk|Ubuntu 22.04/24.04, Debian 11/12"
+            PANEL_TYPE["cloudpanel"]="free"
         fi
     fi
-
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 256 ]]; then
-        PANELS["webmin"]="Webmin (Free - Lightweight)|min: 1 Core, 256MB RAM|Multi-OS"
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 256 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+        PANELS["webmin"]="Webmin|min: 1 Core, 256MB RAM, 10GB Disk|Multi-OS"
+        PANEL_TYPE["webmin"]="free"
     fi
-
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 512 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 512 ]] && [[ "$AVAILABLE_DISK" -ge 3 ]]; then
         if [[ "$OS" =~ ^(centos|ubuntu|debian)$ ]]; then
-            PANELS["vestacp"]="VestaCP (Free)|min: 1 Core, 512MB RAM, 3GB Disk|Ubuntu/Debian/CentOS"
+            PANELS["vestacp"]="VestaCP|min: 1 Core, 512MB RAM, 3GB Disk|Ubuntu/Debian/CentOS"
+            PANEL_TYPE["vestacp"]="free"
         fi
     fi
-
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 512 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 512 ]] && [[ "$AVAILABLE_DISK" -ge 3 ]]; then
         if [[ "$OS" =~ ^(ubuntu|debian)$ ]]; then
-            PANELS["hestiacp"]="HestiaCP (Free - VestaCP Fork)|min: 1 Core, 512MB RAM, 3GB Disk|Ubuntu/Debian"
+            PANELS["hestiacp"]="HestiaCP|min: 1 Core, 512MB RAM, 3GB Disk|Ubuntu/Debian"
+            PANEL_TYPE["hestiacp"]="free"
         fi
     fi
-
-    if [[ "$OS" =~ ^(centos|almalinux|rocky)$ ]] && [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 512 ]]; then
-        PANELS["cwp"]="CentOS Web Panel (Free)|min: 1 Core, 512MB RAM, 5GB Disk|CentOS/AlmaLinux/Rocky"
+    if [[ "$OS" =~ ^(centos|almalinux|rocky)$ ]] && [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 512 ]] && [[ "$AVAILABLE_DISK" -ge 5 ]]; then
+        PANELS["cwp"]="CWP|min: 1 Core, 512MB RAM, 5GB Disk|CentOS/AlmaLinux/Rocky"
+        PANEL_TYPE["cwp"]="free"
     fi
-
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 5 ]]; then
         if [[ "$OS" =~ ^(ubuntu|debian)$ ]]; then
-            PANELS["ispconfig"]="ISPConfig (Free)|min: 1 Core, 1GB RAM, 5GB Disk|Ubuntu/Debian"
+            PANELS["ispconfig"]="ISPConfig|min: 1 Core, 1GB RAM, 5GB Disk|Ubuntu/Debian"
+            PANEL_TYPE["ispconfig"]="free"
         fi
     fi
-
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 512 ]]; then
-        PANELS["ajenti"]="Ajenti (Free - Modern UI)|min: 1 Core, 512MB RAM|Multi-OS"
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 512 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+        PANELS["ajenti"]="Ajenti|min: 1 Core, 512MB RAM, 10GB Disk|Multi-OS"
+        PANEL_TYPE["ajenti"]="free"
+    fi
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+        if [[ "$OS" =~ ^(ubuntu|debian|centos|rocky|almalinux)$ ]]; then
+            PANELS["1panel"]="1Panel|min: 1 Core, 1GB RAM, 10GB Disk|Ubuntu/Debian/CentOS/Rocky/AlmaLinux"
+            PANEL_TYPE["1panel"]="free"
+        fi
+    fi
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+        if [[ "$OS" =~ ^(ubuntu|debian)$ ]]; then
+            PANELS["openpanel"]="OpenPanel|min: 1 Core, 1GB RAM, 10GB Disk|Ubuntu/Debian"
+            PANEL_TYPE["openpanel"]="free"
+        fi
+    fi
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 2048 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+        PANELS["coolify"]="Coolify|min: 1 Core, 2GB RAM, 10GB Disk|Multi-OS (Docker)"
+        PANEL_TYPE["coolify"]="free"
+    fi
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 2048 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+        PANELS["easypanel"]="Easypanel|min: 1 Core, 2GB RAM, 10GB Disk|Multi-OS (Docker)"
+        PANEL_TYPE["easypanel"]="free"
+    fi
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 512 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+        if [[ "$OS" == "debian" ]]; then
+            PANELS["yunohost"]="YunoHost|min: 1 Core, 512MB RAM, 10GB Disk|Debian Only"
+            PANEL_TYPE["yunohost"]="free"
+        fi
     fi
 }
 
+# ─────────────────────────────────────────────────────────────
+# Display panels — single column for free/paid filter, two-column for all
+# ─────────────────────────────────────────────────────────────
 display_panels() {
     if [ ${#PANELS[@]} -eq 0 ]; then
         echo -e "${RED}[ERROR] No control panel compatible with this server!${NC}"
@@ -310,37 +416,169 @@ display_panels() {
         exit 1
     fi
 
-    echo -e "${GREEN}╔════════════════════════════════════════════════════════════╗"
-    echo -e "║             AVAILABLE CONTROL PANELS                       ║"
-    echo -e "╚════════════════════════════════════════════════════════════╝${NC}\n"
-
-    local i=1
     declare -gA PANEL_NUMBERS
+    declare -ga FREE_ENTRIES=()
+    declare -ga PAID_ENTRIES=()
+    local idx=1
 
-    for key in "${!PANELS[@]}"; do
+    local ordered_keys=(cpanel plesk webuzo directadmin interworx ispmanager fastpanel enhance apiscp virtualmin aapanel cyberpanel cloudpanel webmin vestacp hestiacp cwp ispconfig ajenti 1panel openpanel coolify easypanel yunohost)
+
+    for key in "${ordered_keys[@]}"; do
+        [[ -z "${PANELS[$key]+x}" ]] && continue
+
+        if [[ "$PANEL_FILTER" == "free" && "${PANEL_TYPE[$key]}" == "paid" ]]; then continue; fi
+        if [[ "$PANEL_FILTER" == "paid" && "${PANEL_TYPE[$key]}" == "free" ]]; then continue; fi
+
         IFS='|' read -r name specs os_support <<< "${PANELS[$key]}"
-        PANEL_NUMBERS[$i]="$key"
+        PANEL_NUMBERS[$idx]="$key"
 
-        # Badge: flag if panel already installed
-        local badge=""
+        local already=""
         for dp in "${DETECTED_PANELS[@]}"; do
-            if [[ "$name" == *"$dp"* ]] || [[ "$dp" == *"$(echo "$name" | awk '{print $1}')"* ]]; then
-                badge=" ${RED}[ALREADY INSTALLED]${NC}"
+            local first_word
+            first_word=$(echo "$name" | awk '{print $1}')
+            if [[ "$name" == *"$dp"* ]] || [[ "$dp" == *"$first_word"* ]]; then
+                already=" ★"
                 break
             fi
         done
 
-        echo -e "${YELLOW}[$i]${NC} ${CYAN}$name${NC}${badge}"
-        echo -e "    Requirements: $specs"
-        echo -e "    Supported OS: $os_support"
-        echo ""
-        ((i++))
+        local label="${idx}. ${name}${already}"
+
+        if [[ "${PANEL_TYPE[$key]}" == "free" ]]; then
+            FREE_ENTRIES+=("$label|$key")
+        else
+            PAID_ENTRIES+=("$label|$key")
+        fi
+        ((idx++))
     done
 
-    echo -e "${YELLOW}[99]${NC} ${CYAN}Run System Benchmark (YABS)${NC}"
-    echo -e "${YELLOW}[0]${NC}  ${RED}Exit${NC}"
+    if [[ ${#PANEL_NUMBERS[@]} -eq 0 ]]; then
+        echo -e "${RED}[ERROR] No panels available for the selected filter.${NC}"
+        exit 1
+    fi
+
+    # ── Table dimensions ─────────────────────────────────────
+    local CW=28
+    local SCW=$(( CW * 2 + 3 ))
+
+    # Two-column separators
+    local SEP_TOP SEP_MID SEP_BOT
+    SEP_TOP="╔$(printf '═%.0s' $(seq 1 $CW))╦$(printf '═%.0s' $(seq 1 $CW))╗"
+    SEP_MID="╠$(printf '═%.0s' $(seq 1 $CW))╬$(printf '═%.0s' $(seq 1 $CW))╣"
+    SEP_BOT="╚$(printf '═%.0s' $(seq 1 $CW))╩$(printf '═%.0s' $(seq 1 $CW))╝"
+
+    pad_cell_wide() {
+        local text="$1"
+        local stripped
+        stripped=$(echo -e "$text" | sed 's/\x1b\[[0-9;]*m//g')
+        local visible_len=${#stripped}
+        local pad=$(( SCW - visible_len - 2 ))
+        [[ $pad -lt 0 ]] && pad=0
+        printf "║ %b%*s║\n" "$text" "$pad" ""
+    }
+
+    pad_cell() {
+        local text="$1"
+        local stripped
+        stripped=$(echo -e "$text" | sed 's/\x1b\[[0-9;]*m//g')
+        local visible_len=${#stripped}
+        local pad=$(( CW - visible_len - 2 ))
+        [[ $pad -lt 0 ]] && pad=0
+        printf "║ %b%*s " "$text" "$pad" ""
+    }
+
+    print_row() {
+        pad_cell "$1"
+        pad_cell "$2"
+        echo "║"
+    }
+
+    # Single-column separators
+    local SEP_TOP_S SEP_MID_S SEP_BOT_S
+    SEP_TOP_S="╔$(printf '═%.0s' $(seq 1 $SCW))╗"
+    SEP_MID_S="╠$(printf '═%.0s' $(seq 1 $SCW))╣"
+    SEP_BOT_S="╚$(printf '═%.0s' $(seq 1 $SCW))╝"
+
+    echo ""
+    echo -e "${GREEN}╔════════════════════════════════════════════════════════════╗"
+    echo -e "║                 AVAILABLE CONTROL PANELS                   ║"
+    echo -e "╚════════════════════════════════════════════════════════════╝${NC}"
+
+    if [[ "$PANEL_FILTER" == "free" ]]; then
+        echo -e "${GREEN}  Showing: Free Panels only${NC}\n"
+
+        echo -e "${GREEN}${SEP_TOP_S}${NC}"
+        pad_cell_wide "${GREEN}  ✦ FREE PANELS${NC}"
+        echo -e "${GREEN}${SEP_MID_S}${NC}"
+
+        for (( r=0; r<${#FREE_ENTRIES[@]}; r++ )); do
+            local fl
+            IFS='|' read -r fl _ <<< "${FREE_ENTRIES[$r]}"
+            pad_cell_wide "${CYAN}  ${fl}${NC}"
+            if [[ $(( r+1 )) -lt ${#FREE_ENTRIES[@]} ]]; then
+                echo -e "${GREEN}${SEP_MID_S}${NC}"
+            fi
+        done
+
+        echo -e "${GREEN}${SEP_BOT_S}${NC}"
+
+    elif [[ "$PANEL_FILTER" == "paid" ]]; then
+        echo -e "${RED}  Showing: Paid Panels only${NC}\n"
+
+        echo -e "${YELLOW}${SEP_TOP_S}${NC}"
+        pad_cell_wide "${RED}  ✦ PAID PANELS${NC}"
+        echo -e "${YELLOW}${SEP_MID_S}${NC}"
+
+        for (( r=0; r<${#PAID_ENTRIES[@]}; r++ )); do
+            local pl
+            IFS='|' read -r pl _ <<< "${PAID_ENTRIES[$r]}"
+            pad_cell_wide "${YELLOW}  ${pl}${NC}"
+            if [[ $(( r+1 )) -lt ${#PAID_ENTRIES[@]} ]]; then
+                echo -e "${YELLOW}${SEP_MID_S}${NC}"
+            fi
+        done
+
+        echo -e "${YELLOW}${SEP_BOT_S}${NC}"
+
+    else
+        echo -e "${CYAN}  Showing: All Panels${NC}\n"
+
+        echo -e "${CYAN}${SEP_TOP}${NC}"
+        print_row "${GREEN}  ✦ FREE PANELS${NC}" "${RED}  ✦ PAID PANELS${NC}"
+        echo -e "${CYAN}${SEP_MID}${NC}"
+
+        local max_rows
+        max_rows=$(( ${#FREE_ENTRIES[@]} > ${#PAID_ENTRIES[@]} ? ${#FREE_ENTRIES[@]} : ${#PAID_ENTRIES[@]} ))
+
+        for (( r=0; r<max_rows; r++ )); do
+            local fl="" pl=""
+
+            if [[ $r -lt ${#FREE_ENTRIES[@]} ]]; then
+                IFS='|' read -r fl _ <<< "${FREE_ENTRIES[$r]}"
+                fl="${CYAN}  ${fl}${NC}"
+            fi
+            if [[ $r -lt ${#PAID_ENTRIES[@]} ]]; then
+                IFS='|' read -r pl _ <<< "${PAID_ENTRIES[$r]}"
+                pl="${YELLOW}  ${pl}${NC}"
+            fi
+
+            print_row "$fl" "$pl"
+
+            if [[ $(( r+1 )) -lt $max_rows ]]; then
+                echo -e "${CYAN}${SEP_MID}${NC}"
+            fi
+        done
+
+        echo -e "${CYAN}${SEP_BOT}${NC}"
+    fi
+
+    echo ""
+    [[ ${#DETECTED_PANELS[@]} -gt 0 ]] && echo -e "  ${RED}★ = Already installed on this server${NC}"
+    echo -e "  ${YELLOW}[99]${NC} ${CYAN}Run System Benchmark (YABS)${NC}"
+    echo -e "  ${YELLOW}[0]${NC}  ${RED}Exit${NC}"
     echo ""
 }
+
 
 # ─────────────────────────────────────────────────────────────
 # Choose installation mode: Quick or Normal
@@ -376,15 +614,14 @@ install_cpanel() {
     echo -e "${YELLOW}         Pricing starts at \$15.99/month — https://cpanel.net/pricing${NC}\n"
 
     if [[ "$INSTALL_MODE" == "quick" ]]; then
-        echo -e "${GREEN}[QUICK] Proceeding with installation — assuming license is already owned.${NC}"
+        echo -e "${GREEN}[QUICK] Proceeding — assuming license is already owned.${NC}"
     else
         read -p "Do you already have a license? (y/n): " has_license
         if [[ "$has_license" != "y" ]]; then
-            echo -e "${RED}Installation cancelled. Please purchase a license at https://cpanel.net${NC}"
+            echo -e "${RED}Installation cancelled. Purchase a license at https://cpanel.net${NC}"
             return 1
         fi
     fi
-
     cd /home
     curl -o latest -L https://securedownloads.cpanel.net/latest
     sh latest
@@ -406,9 +643,73 @@ install_plesk() {
     fi
 }
 
+install_webuzo() {
+    echo -e "${BLUE}[INFO] Installing Webuzo Panel...${NC}"
+    echo -e "${YELLOW}[WARNING] Webuzo is commercial software — license required.${NC}"
+    echo -e "${YELLOW}          Pricing: https://www.webuzo.com/pricing${NC}\n"
+
+    # Check SELinux
+    if [[ -f /usr/sbin/selinuxenabled ]] && selinuxenabled; then
+        echo -e "${RED}[ERROR] SELinux is enabled. Please disable it before installing Webuzo.${NC}"
+        echo -e "        Run: setenforce 0 && sed -i 's/SELINUX=enforcing/SELINUX=disabled/g' /etc/selinux/config"
+        return 1
+    fi
+
+    wget -N http://files.webuzo.com/install.sh
+    chmod 755 install.sh
+
+    if [[ "$INSTALL_MODE" == "quick" ]]; then
+        echo -e "${GREEN}[QUICK] Running Webuzo installer automatically...${NC}"
+        ./install.sh
+    else
+        echo -e "${CYAN}[NORMAL] Running Webuzo interactive installer...${NC}"
+        ./install.sh
+    fi
+}
+
+install_directadmin() {
+    echo -e "${BLUE}[INFO] Installing DirectAdmin...${NC}"
+    echo -e "${YELLOW}[WARNING] DirectAdmin requires a license key or a 60-day trial.${NC}\n"
+    bash <(curl -Ss https://www.directadmin.com/setup.sh) auto
+}
+
+install_interworx() {
+    echo -e "${BLUE}[INFO] Installing InterWorx...${NC}"
+    sh <(curl -sL https://updates.interworx.com/interworx/bin/interworx-install.sh)
+}
+
+install_ispmanager() {
+    echo -e "${BLUE}[INFO] Installing ISPmanager...${NC}"
+    wget https://download.ispmanager.com/install.sh -O install_ispmanager.sh
+    sh install_ispmanager.sh
+}
+
+install_fastpanel() {
+    echo -e "${BLUE}[INFO] Installing FASTPANEL...${NC}"
+    wget http://repo.fastpanel.direct/install_fastpanel.sh -O - | bash -
+}
+
+install_enhance() {
+    echo -e "${BLUE}[INFO] Installing Enhance Control Panel...${NC}"
+    if [[ "$OS" != "ubuntu" ]]; then
+        echo -e "${RED}[ERROR] Enhance only supports Ubuntu 22.04/24.04.${NC}"; return 1
+    fi
+    curl https://cli.enhance.com/install.sh | sh
+}
+
+install_apiscp() {
+    echo -e "${BLUE}[INFO] Installing ApisCP...${NC}"
+    curl -sL https://get.apiscp.com | bash
+}
+
+install_virtualmin() {
+    echo -e "${BLUE}[INFO] Installing Virtualmin Pro...${NC}"
+    wget https://software.virtualmin.com/gpl/scripts/install.sh -O install_virtualmin.sh
+    sh install_virtualmin.sh
+}
+
 install_aapanel() {
     echo -e "${BLUE}[INFO] Installing aaPanel...${NC}"
-
     wget -O install_aapanel.sh "https://www.aapanel.com/script/install_7.0_en.sh"
 
     if [[ "$INSTALL_MODE" == "quick" ]]; then
@@ -425,7 +726,7 @@ install_cyberpanel() {
 
     if [[ "$INSTALL_MODE" == "quick" ]]; then
         echo -e "${GREEN}[QUICK] Running CyberPanel non-interactive installer...${NC}"
-        echo -e "${CYAN}        Defaults: Full install, OpenLiteSpeed, with Memcached & Watchdog.${NC}"
+        echo -e "${CYAN}        Defaults: Full install, OpenLiteSpeed, Memcached & Watchdog.${NC}"
         sh <(curl -sL https://cyberpanel.net/install.sh || wget -qO - https://cyberpanel.net/install.sh) \
             --no-interactive 1 1 y n y n y y
     else
@@ -441,23 +742,19 @@ install_cloudpanel() {
         echo -e "${RED}[ERROR] CloudPanel only supports Ubuntu 22.04/24.04 and Debian 11/12.${NC}"
         return 1
     fi
-
     curl -sS https://installer.cloudpanel.io/ce/v2/install.sh -o install_cloudpanel.sh
 
     if [[ "$INSTALL_MODE" == "quick" ]]; then
         echo -e "${GREEN}[QUICK] Verifying checksum and installing CloudPanel automatically...${NC}"
-        echo "3b639730371ac2a56f8f955dbdf8459d5aaeb425578eb10c6e4d6b76a75de544 install_cloudpanel.sh" | sha256sum -c && \
-        bash install_cloudpanel.sh
     else
         echo -e "${CYAN}[NORMAL] Verifying checksum and installing CloudPanel...${NC}"
-        echo "3b639730371ac2a56f8f955dbdf8459d5aaeb425578eb10c6e4d6b76a75de544 install_cloudpanel.sh" | sha256sum -c && \
-        bash install_cloudpanel.sh
     fi
+    echo "3b639730371ac2a56f8f955dbdf8459d5aaeb425578eb10c6e4d6b76a75de544 install_cloudpanel.sh" | sha256sum -c && \
+    bash install_cloudpanel.sh
 }
 
 install_webmin() {
     echo -e "${BLUE}[INFO] Installing Webmin...${NC}"
-
     curl -o setup-repos.sh https://raw.githubusercontent.com/webmin/webmin/master/setup-repos.sh
     sh setup-repos.sh --force
 
@@ -487,20 +784,18 @@ install_vestacp() {
     else
         read -p "Continue with VestaCP installation? (y/n): " continue_install
         if [[ "$continue_install" != "y" ]]; then
-            echo -e "${YELLOW}Installation cancelled.${NC}"
-            return 1
+            echo -e "${YELLOW}Installation cancelled.${NC}"; return 1
         fi
     fi
-
     curl -O http://vestacp.com/pub/vst-install.sh
 
     if [[ "$INSTALL_MODE" == "quick" ]]; then
         local vesta_pass
         vesta_pass="$(openssl rand -base64 12 | tr -dc 'A-Za-z0-9' | head -c 14)"
-        echo -e "${YELLOW}╔══════════════════════════════════════════╗${NC}"
-        echo -e "${YELLOW}  Generated Admin Password: ${vesta_pass}  ${NC}"
-        echo -e "${YELLOW}  Save this password before continuing!   ${NC}"
-        echo -e "${YELLOW}╚══════════════════════════════════════════╝${NC}"
+        echo -e "${YELLOW}╔══════════════════════════════════════════╗"
+        echo -e "  Generated Admin Password: ${vesta_pass}"
+        echo -e "  Save this password before continuing!"
+        echo -e "╚══════════════════════════════════════════╝${NC}"
         sleep 5
         bash vst-install.sh --force \
             --email "admin@$(hostname -f)" \
@@ -513,17 +808,16 @@ install_vestacp() {
 
 install_hestiacp() {
     echo -e "${BLUE}[INFO] Installing HestiaCP...${NC}"
-
     wget https://raw.githubusercontent.com/hestiacp/hestiacp/release/install/hst-install.sh
 
     if [[ "$INSTALL_MODE" == "quick" ]]; then
         echo -e "${GREEN}[QUICK] Running HestiaCP non-interactive installer with --force flag.${NC}"
         local hestia_pass
         hestia_pass="$(openssl rand -base64 14 | tr -dc 'A-Za-z0-9' | head -c 16)"
-        echo -e "${YELLOW}╔══════════════════════════════════════════╗${NC}"
-        echo -e "${YELLOW}  HestiaCP Admin Password: ${hestia_pass}  ${NC}"
-        echo -e "${YELLOW}  Save this password before continuing!   ${NC}"
-        echo -e "${YELLOW}╚══════════════════════════════════════════╝${NC}"
+        echo -e "${YELLOW}╔══════════════════════════════════════════╗"
+        echo -e "  HestiaCP Admin Password: ${hestia_pass}"
+        echo -e "  Save this password before continuing!"
+        echo -e "╚══════════════════════════════════════════╝${NC}"
         sleep 6
         bash hst-install.sh \
             --force \
@@ -538,7 +832,6 @@ install_hestiacp() {
 
 install_cwp() {
     echo -e "${BLUE}[INFO] Installing CentOS Web Panel (CWP)...${NC}"
-
     local CWP_MAJOR
     CWP_MAJOR=$(echo "$OS_VERSION" | cut -d. -f1)
     cd /usr/local/src
@@ -548,13 +841,11 @@ install_cwp() {
         8) wget http://centos-webpanel.com/cwp-el8-latest ; sh cwp-el8-latest ;;
         9) wget http://centos-webpanel.com/cwp-el9-latest ; sh cwp-el9-latest ;;
         *)
-            echo -e "${RED}[ERROR] OS version not supported by CWP.${NC}"
-            return 1
-            ;;
+            echo -e "${RED}[ERROR] OS version not supported by CWP.${NC}"; return 1 ;;
     esac
 
     if [[ "$INSTALL_MODE" == "quick" ]]; then
-        echo -e "${GREEN}[QUICK] CWP installer runs non-interactively by default — no extra flags needed.${NC}"
+        echo -e "${GREEN}[QUICK] CWP installer runs non-interactively by default.${NC}"
     else
         echo -e "${CYAN}[NORMAL] CWP installer running. Server will reboot automatically when done.${NC}"
     fi
@@ -591,6 +882,37 @@ install_ajenti() {
     fi
 }
 
+install_1panel() {
+    echo -e "${BLUE}[INFO] Installing 1Panel...${NC}"
+    if [[ "$INSTALL_MODE" == "quick" ]]; then
+        echo -e "${GREEN}[QUICK] Running 1Panel installer with default settings...${NC}"
+        bash -c "$(curl -sSL https://resource.1panel.pro/v2/quick_start.sh)"
+    else
+        echo -e "${CYAN}[NORMAL] Running 1Panel installer...${NC}"
+        bash -c "$(curl -sSL https://resource.1panel.pro/v2/quick_start.sh)"
+    fi
+}
+
+install_openpanel() {
+    echo -e "${BLUE}[INFO] Installing OpenPanel...${NC}"
+    bash <(curl -sSL https://openpanel.co/install.sh)
+}
+
+install_coolify() {
+    echo -e "${BLUE}[INFO] Installing Coolify...${NC}"
+    curl -fsSL https://get.coollabs.io/coolify/install.sh | bash
+}
+
+install_easypanel() {
+    echo -e "${BLUE}[INFO] Installing Easypanel...${NC}"
+    curl -sSL https://get.easypanel.io | bash
+}
+
+install_yunohost() {
+    echo -e "${BLUE}[INFO] Installing YunoHost...${NC}"
+    curl https://install.yunohost.org | bash
+}
+
 # ─────────────────────────────────────────────────────────────
 # Main installation handler
 # ─────────────────────────────────────────────────────────────
@@ -616,9 +938,17 @@ perform_installation() {
     echo -e "${GREEN}════════════════════════════════════════════════════════════${NC}\n"
 
     case $panel_key in
-        cpanel)     install_cpanel     ;;
-        plesk)      install_plesk      ;;
-        aapanel)    install_aapanel    ;;
+        cpanel)      install_cpanel      ;;
+        plesk)       install_plesk       ;;
+        webuzo)      install_webuzo      ;;
+        directadmin) install_directadmin ;;
+        interworx)   install_interworx   ;;
+        ispmanager)  install_ispmanager  ;;
+        fastpanel)   install_fastpanel   ;;
+        enhance)     install_enhance     ;;
+        apiscp)      install_apiscp      ;;
+        virtualmin)  install_virtualmin  ;;
+        aapanel)     install_aapanel     ;;
         cyberpanel) install_cyberpanel ;;
         cloudpanel) install_cloudpanel ;;
         webmin)     install_webmin     ;;
@@ -626,28 +956,47 @@ perform_installation() {
         hestiacp)   install_hestiacp   ;;
         cwp)        install_cwp        ;;
         ispconfig)  install_ispconfig  ;;
-        ajenti)     install_ajenti     ;;
+        ajenti)      install_ajenti      ;;
+        1panel)      install_1panel      ;;
+        openpanel)   install_openpanel   ;;
+        coolify)     install_coolify     ;;
+        easypanel)   install_easypanel   ;;
+        yunohost)    install_yunohost    ;;
         *)
-            echo -e "${RED}[ERROR] Unknown panel: $panel_key${NC}"
-            return 1
-            ;;
+            echo -e "${RED}[ERROR] Unknown panel: $panel_key${NC}"; return 1 ;;
     esac
 
     echo -e "\n${GREEN}════════════════════════════════════════════════════════════${NC}"
     echo -e "${GREEN}  Installation completed! [${INSTALL_MODE^^} MODE]${NC}"
     echo -e "${GREEN}════════════════════════════════════════════════════════════${NC}"
     echo ""
-    echo -e "${CYAN}Default panel access URLs:${NC}"
-    echo -e "  cPanel      : https://${IP_ADDRESS}:2087"
-    echo -e "  Plesk        : https://${IP_ADDRESS}:8443"
-    echo -e "  aaPanel      : http://${IP_ADDRESS}:7800"
-    echo -e "  CyberPanel   : https://${IP_ADDRESS}:8090"
-    echo -e "  CloudPanel   : https://${IP_ADDRESS}:8443"
-    echo -e "  Webmin       : https://${IP_ADDRESS}:10000"
-    echo -e "  HestiaCP     : https://${IP_ADDRESS}:8083"
-    echo -e "  CWP          : https://${IP_ADDRESS}:2087 (after reboot)"
-    echo -e "  ISPConfig    : https://${IP_ADDRESS}:8080"
-    echo -e "  Ajenti       : https://${IP_ADDRESS}:8000"
+    echo -e "${CYAN}Panel access URL:${NC}"
+    case $panel_key in
+        cpanel)      echo -e "  cPanel      : https://${IP_ADDRESS}:2087" ;;
+        plesk)       echo -e "  Plesk       : https://${IP_ADDRESS}:8443" ;;
+        webuzo)      echo -e "  Webuzo      : https://${IP_ADDRESS}:2005" ;;
+        directadmin) echo -e "  DirectAdmin : https://${IP_ADDRESS}:2222" ;;
+        interworx)   echo -e "  InterWorx   : https://${IP_ADDRESS}:2443" ;;
+        ispmanager)  echo -e "  ISPmanager  : https://${IP_ADDRESS}:1500" ;;
+        fastpanel)   echo -e "  FASTPANEL   : https://${IP_ADDRESS}:8888" ;;
+        enhance)     echo -e "  Enhance     : https://${IP_ADDRESS}:8080" ;;
+        apiscp)      echo -e "  ApisCP      : https://${IP_ADDRESS}:2083" ;;
+        virtualmin)  echo -e "  Virtualmin  : https://${IP_ADDRESS}:10000" ;;
+        aapanel)     echo -e "  aaPanel     : http://${IP_ADDRESS}:7800" ;;
+        cyberpanel)  echo -e "  CyberPanel  : https://${IP_ADDRESS}:8090" ;;
+        cloudpanel)  echo -e "  CloudPanel  : https://${IP_ADDRESS}:8443" ;;
+        webmin)      echo -e "  Webmin      : https://${IP_ADDRESS}:10000" ;;
+        vestacp)     echo -e "  VestaCP     : https://${IP_ADDRESS}:8083" ;;
+        hestiacp)    echo -e "  HestiaCP    : https://${IP_ADDRESS}:8083" ;;
+        cwp)         echo -e "  CWP         : https://${IP_ADDRESS}:2031 (after reboot)" ;;
+        ispconfig)   echo -e "  ISPConfig   : https://${IP_ADDRESS}:8080" ;;
+        ajenti)      echo -e "  Ajenti      : https://${IP_ADDRESS}:8000" ;;
+        1panel)      echo -e "  1Panel      : Check console output for random port and entrance" ;;
+        openpanel)   echo -e "  OpenPanel   : https://${IP_ADDRESS}:2083" ;;
+        coolify)     echo -e "  Coolify     : https://${IP_ADDRESS}:8000" ;;
+        easypanel)   echo -e "  Easypanel   : http://${IP_ADDRESS}:3000" ;;
+        yunohost)    echo -e "  YunoHost    : https://${IP_ADDRESS}/admin" ;;
+    esac
     echo ""
 }
 
@@ -664,24 +1013,24 @@ main() {
     display_install_status
     warn_if_not_fresh
     check_compatibility
+    choose_panel_filter
     display_panels
 
     read -p "Select the control panel to install (enter number): " choice
 
     if [[ "$choice" == "0" ]]; then
-        echo -e "${YELLOW}Exiting installer...${NC}"
-        exit 0
+        echo -e "${YELLOW}Exiting installer...${NC}"; exit 0
     fi
 
     if [[ "$choice" == "99" ]]; then
         echo -e "\n${BLUE}[INFO] Running System Benchmark (YABS)...${NC}"
-        curl -sL yabs.sh | bash
-        exit 0
+        curl -sL yabs.sh | bash; exit 0
     fi
 
     if [[ -n "${PANEL_NUMBERS[$choice]}" ]]; then
         SELECTED_PANEL="${PANEL_NUMBERS[$choice]}"
         IFS='|' read -r name _ _ <<< "${PANELS[$SELECTED_PANEL]}"
+        local panel_type="${PANEL_TYPE[$SELECTED_PANEL]}"
 
         echo -e "\n${CYAN}Selected panel: $name${NC}"
 
@@ -691,6 +1040,7 @@ main() {
         echo -e "║                  INSTALLATION SUMMARY                      ║"
         echo -e "╚════════════════════════════════════════════════════════════╝${NC}"
         echo -e "  Panel   : ${CYAN}${name}${NC}"
+        echo -e "  Type    : $([ "$panel_type" == "free" ] && echo "${GREEN}Free${NC}" || echo "${RED}Paid (License Required)${NC}")"
         echo -e "  Mode    : ${CYAN}${INSTALL_MODE^^}${NC}"
         echo -e "  Server  : ${CYAN}${IP_ADDRESS}${NC}"
         echo -e "  OS      : ${CYAN}${OS_NAME}${NC}"
