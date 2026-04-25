@@ -40,6 +40,7 @@ This document outlines the minimum system requirements for each control panel su
 | **Coolify** | Multi-OS (Docker based) | 1 Core | 2 GB | 10 GB |
 | **Easypanel** | Multi-OS (Docker based) | 1 Core | 2 GB | 10 GB |
 | **YunoHost** | Debian | 1 Core | 512 MB | 10 GB |
+| **Pterodactyl** | Ubuntu, Debian | 1 Core | 1 GB | 10 GB |
 
 ---
 

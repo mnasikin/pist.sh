@@ -42,6 +42,7 @@ The script currently supports the following panels (availability depends on your
 22. **Coolify** (Free)
 23. **Easypanel** (Free)
 24. **YunoHost** (Free)
+25. **Pterodactyl** (Free)
 
 ## Requirements
 

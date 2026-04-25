@@ -21,7 +21,7 @@ print_banner() {
     clear
     echo -e "${CYAN}"
     echo "╔════════════════════════════════════════════════════════════╗"
-    echo "║      pist.sh — VPS Control Panel Auto Installer v1.1      ║"
+    echo "║      pist.sh — VPS Control Panel Auto Installer v1.2      ║"
     echo "║     One Script, Multiple Panels — Quick & Normal Mode     ║"
     echo "║     Repository: https://github.com/mnasikin/pist.sh       ║"
     echo "╚════════════════════════════════════════════════════════════╝"
@@ -46,6 +46,17 @@ detect_os() {
         echo -e "${RED}[ERROR] Unable to detect OS${NC}"
         exit 1
     fi
+}
+
+is_pterodactyl_supported_os() {
+    case "${OS}:${OS_VERSION}" in
+        ubuntu:20.04|ubuntu:22.04|ubuntu:24.04|debian:11|debian:12)
+            return 0
+            ;;
+        *)
+            return 1
+            ;;
+    esac
 }
 
 get_specs() {
@@ -246,6 +257,7 @@ choose_panel_filter() {
     echo ""
     echo -e "  ${YELLOW}[1]${NC} ${GREEN}Free Panels${NC}    — aaPanel, CyberPanel, CloudPanel, Webmin, VestaCP,"
     echo -e "                    HestiaCP, CWP, ISPConfig, Ajenti, 1Panel, OpenPanel,"
+    echo -e "                    Pterodactyl,"
     echo -e "                    Coolify, Easypanel, YunoHost"
     echo ""
     echo -e "  ${YELLOW}[2]${NC} ${RED}Paid Panels${NC}    — cPanel, Plesk, Webuzo, DirectAdmin, InterWorx,"
@@ -391,6 +403,12 @@ check_compatibility() {
         fi
     fi
     if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 2048 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+        if is_pterodactyl_supported_os; then
+            PANELS["pterodactyl"]="Pterodactyl|min: 1 Core, 2GB RAM, 10GB Disk|Ubuntu 20.04/22.04/24.04, Debian 11/12"
+            PANEL_TYPE["pterodactyl"]="free"
+        fi
+    fi
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 2048 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
         PANELS["coolify"]="Coolify|min: 1 Core, 2GB RAM, 10GB Disk|Multi-OS (Docker)"
         PANEL_TYPE["coolify"]="free"
     fi
@@ -421,7 +439,7 @@ display_panels() {
     declare -ga PAID_ENTRIES=()
     local idx=1
 
-    local ordered_keys=(cpanel plesk webuzo directadmin interworx ispmanager fastpanel enhance apiscp virtualmin aapanel cyberpanel cloudpanel webmin vestacp hestiacp cwp ispconfig ajenti 1panel openpanel coolify easypanel yunohost)
+    local ordered_keys=(cpanel plesk webuzo directadmin interworx ispmanager fastpanel enhance apiscp virtualmin aapanel cyberpanel cloudpanel webmin vestacp hestiacp cwp ispconfig ajenti 1panel openpanel pterodactyl coolify easypanel yunohost)
 
     for key in "${ordered_keys[@]}"; do
         [[ -z "${PANELS[$key]+x}" ]] && continue
@@ -898,6 +916,21 @@ install_openpanel() {
     bash <(curl -sSL https://openpanel.co/install.sh)
 }
 
+install_pterodactyl() {
+    local installer_url="https://raw.githubusercontent.com/mnasikin/pist.sh/main/pterodactyl_installer.sh"
+    local installer_path="/tmp/pterodactyl_installer.sh"
+
+    if ! is_pterodactyl_supported_os; then
+        echo -e "${RED}[ERROR] Pterodactyl supports Ubuntu 20.04/22.04/24.04 and Debian 11/12 only.${NC}"
+        return 1
+    fi
+
+    echo -e "${BLUE}[INFO] Downloading Pterodactyl installer...${NC}"
+    curl -fsSL "$installer_url" -o "$installer_path"
+    chmod +x "$installer_path"
+    bash "$installer_path"
+}
+
 install_coolify() {
     echo -e "${BLUE}[INFO] Installing Coolify...${NC}"
     curl -fsSL https://get.coollabs.io/coolify/install.sh | bash
@@ -959,6 +992,7 @@ perform_installation() {
         ajenti)      install_ajenti      ;;
         1panel)      install_1panel      ;;
         openpanel)   install_openpanel   ;;
+        pterodactyl) install_pterodactyl ;;
         coolify)     install_coolify     ;;
         easypanel)   install_easypanel   ;;
         yunohost)    install_yunohost    ;;
@@ -993,6 +1027,7 @@ perform_installation() {
         ajenti)      echo -e "  Ajenti      : https://${IP_ADDRESS}:8000" ;;
         1panel)      echo -e "  1Panel      : Check console output for random port and entrance" ;;
         openpanel)   echo -e "  OpenPanel   : https://${IP_ADDRESS}:2083" ;;
+        pterodactyl) echo -e "  Pterodactyl : Use the domain or IP configured during the installer" ;;
         coolify)     echo -e "  Coolify     : https://${IP_ADDRESS}:8000" ;;
         easypanel)   echo -e "  Easypanel   : http://${IP_ADDRESS}:3000" ;;
         yunohost)    echo -e "  YunoHost    : https://${IP_ADDRESS}/admin" ;;
