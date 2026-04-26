@@ -7,7 +7,7 @@ Repository: https://github.com/mnasikin/pist.sh
 ## Features
 
 - **Auto-Detection**: Automatically identifies OS distribution, version, and server constraints (RAM, CPU, Disk Space) to prevent installation failures.
-- **Multiple Panels**: Supports automatic installation for 11 different control panels.
+- **Multiple Panels**: Supports automatic installation for 25 different control panels.
 - **Installation Modes**:
   - **Quick Mode**: Runs installations non-interactively using default settings. Good for fast and automated deployments.
   - **Normal Mode**: Runs the standard interactive installer, allowing for custom configuration during the process.

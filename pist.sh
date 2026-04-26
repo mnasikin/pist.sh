@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# pist.sh - VPS Control Panel Auto Installer v1.1
+# pist.sh - VPS Control Panel Auto Installer v1.2
 # Supports Quick Mode (non-interactive) and Normal Mode (interactive)
 
 RED='\033[0;31m'
@@ -21,7 +21,7 @@ print_banner() {
     clear
     echo -e "${CYAN}"
     echo "╔════════════════════════════════════════════════════════════╗"
-    echo "║      pist.sh — VPS Control Panel Auto Installer v1.2      ║"
+    echo "║      pist.sh — VPS Control Panel Auto Installer v1.3      ║"
     echo "║     One Script, Multiple Panels — Quick & Normal Mode     ║"
     echo "║     Repository: https://github.com/mnasikin/pist.sh       ║"
     echo "╚════════════════════════════════════════════════════════════╝"
@@ -282,59 +282,59 @@ check_compatibility() {
     declare -gA PANEL_TYPE   # key -> "free" or "paid"
 
     # --- PAID ---
-    if [[ "$OS" =~ ^(centos|almalinux|rocky)$ ]] && [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 20 ]]; then
+    if [[ "$OS" =~ ^(centos|almalinux|rocky)$ ]] && [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 900 ]] && [[ "$AVAILABLE_DISK" -ge 20 ]]; then
         PANELS["cpanel"]="cPanel/WHM|min: 1 Core, 1GB RAM, 20GB Disk|CentOS/AlmaLinux/Rocky"
         PANEL_TYPE["cpanel"]="paid"
     fi
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 4 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 900 ]] && [[ "$AVAILABLE_DISK" -ge 4 ]]; then
         if [[ "$OS" =~ ^(centos|ubuntu|debian|almalinux|rocky)$ ]]; then
             PANELS["plesk"]="Plesk|min: 1 Core, 1GB RAM, 4GB Disk|Multi-OS"
             PANEL_TYPE["plesk"]="paid"
         fi
     fi
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 5 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 900 ]] && [[ "$AVAILABLE_DISK" -ge 5 ]]; then
         if [[ "$OS" =~ ^(centos|ubuntu|almalinux|rocky)$ ]]; then
             PANELS["webuzo"]="Webuzo|min: 1 Core, 1GB RAM, 5GB Disk|Ubuntu/CentOS/AlmaLinux/Rocky"
             PANEL_TYPE["webuzo"]="paid"
         fi
     fi
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 2 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 900 ]] && [[ "$AVAILABLE_DISK" -ge 2 ]]; then
         if [[ "$OS" =~ ^(centos|ubuntu|almalinux|rocky|debian)$ ]]; then
             PANELS["directadmin"]="DirectAdmin|min: 1 Core, 1GB RAM, 2GB Disk|Multi-OS"
             PANEL_TYPE["directadmin"]="paid"
         fi
     fi
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 900 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
         if [[ "$OS" =~ ^(centos|almalinux|rocky)$ ]]; then
             PANELS["interworx"]="InterWorx|min: 1 Core, 1GB RAM, 10GB Disk|RHEL/CentOS/Alma/Rocky"
             PANEL_TYPE["interworx"]="paid"
         fi
     fi
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 900 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
         if [[ "$OS" =~ ^(ubuntu|debian|almalinux|rocky)$ ]]; then
             PANELS["ispmanager"]="ISPmanager|min: 1 Core, 1GB RAM, 10GB Disk|Ubuntu/Debian/Alma/Rocky"
             PANEL_TYPE["ispmanager"]="paid"
         fi
     fi
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 900 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
         if [[ "$OS" =~ ^(ubuntu|debian|centos|almalinux|rocky|debian)$ ]]; then
             PANELS["fastpanel"]="FASTPANEL|min: 1 Core, 1GB RAM, 10GB Disk|Multi-OS"
             PANEL_TYPE["fastpanel"]="paid"
         fi
     fi
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 2048 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1900 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
         if [[ "$OS" == "ubuntu" ]]; then
             PANELS["enhance"]="Enhance|min: 1 Core, 2GB RAM, 10GB Disk|Ubuntu Only (Docker)"
             PANEL_TYPE["enhance"]="paid"
         fi
     fi
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 2048 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1900 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
         if [[ "$OS" =~ ^(centos|almalinux|rocky)$ ]]; then
             PANELS["apiscp"]="ApisCP|min: 1 Core, 2GB RAM, 10GB Disk|RHEL/CentOS/Alma/Rocky"
             PANEL_TYPE["apiscp"]="paid"
         fi
     fi
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 900 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
         if [[ "$OS" =~ ^(ubuntu|debian|centos|almalinux|rocky)$ ]]; then
             PANELS["virtualmin"]="Virtualmin Pro|min: 1 Core, 1GB RAM, 10GB Disk|Multi-OS"
             PANEL_TYPE["virtualmin"]="paid"
@@ -348,13 +348,13 @@ check_compatibility() {
             PANEL_TYPE["aapanel"]="free"
         fi
     fi
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 900 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
         if [[ "$OS" =~ ^(centos|ubuntu|almalinux)$ ]]; then
             PANELS["cyberpanel"]="CyberPanel|min: 1 Core, 1GB RAM, 10GB Disk|Ubuntu/CentOS/AlmaLinux"
             PANEL_TYPE["cyberpanel"]="free"
         fi
     fi
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 2048 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1900 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
         if [[ "$OS" == "ubuntu" || "$OS" == "debian" ]]; then
             PANELS["cloudpanel"]="CloudPanel|min: 1 Core, 2GB RAM, 10GB Disk|Ubuntu 22.04/24.04, Debian 11/12"
             PANEL_TYPE["cloudpanel"]="free"
@@ -380,7 +380,7 @@ check_compatibility() {
         PANELS["cwp"]="CWP|min: 1 Core, 512MB RAM, 5GB Disk|CentOS/AlmaLinux/Rocky"
         PANEL_TYPE["cwp"]="free"
     fi
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 5 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 900 ]] && [[ "$AVAILABLE_DISK" -ge 5 ]]; then
         if [[ "$OS" =~ ^(ubuntu|debian)$ ]]; then
             PANELS["ispconfig"]="ISPConfig|min: 1 Core, 1GB RAM, 5GB Disk|Ubuntu/Debian"
             PANEL_TYPE["ispconfig"]="free"
@@ -390,29 +390,29 @@ check_compatibility() {
         PANELS["ajenti"]="Ajenti|min: 1 Core, 512MB RAM, 10GB Disk|Multi-OS"
         PANEL_TYPE["ajenti"]="free"
     fi
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 900 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
         if [[ "$OS" =~ ^(ubuntu|debian|centos|rocky|almalinux)$ ]]; then
             PANELS["1panel"]="1Panel|min: 1 Core, 1GB RAM, 10GB Disk|Ubuntu/Debian/CentOS/Rocky/AlmaLinux"
             PANEL_TYPE["1panel"]="free"
         fi
     fi
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1024 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 900 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
         if [[ "$OS" =~ ^(ubuntu|debian)$ ]]; then
             PANELS["openpanel"]="OpenPanel|min: 1 Core, 1GB RAM, 10GB Disk|Ubuntu/Debian"
             PANEL_TYPE["openpanel"]="free"
         fi
     fi
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 2048 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 900 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
         if is_pterodactyl_supported_os; then
-            PANELS["pterodactyl"]="Pterodactyl|min: 1 Core, 2GB RAM, 10GB Disk|Ubuntu 20.04/22.04/24.04, Debian 11/12"
+            PANELS["pterodactyl"]="Pterodactyl|min: 1 Core, 1GB RAM, 10GB Disk|Ubuntu 20.04/22.04/24.04, Debian 11/12"
             PANEL_TYPE["pterodactyl"]="free"
         fi
     fi
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 2048 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1900 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
         PANELS["coolify"]="Coolify|min: 1 Core, 2GB RAM, 10GB Disk|Multi-OS (Docker)"
         PANEL_TYPE["coolify"]="free"
     fi
-    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 2048 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
+    if [[ "$CPU_CORES" -ge 1 ]] && [[ "$TOTAL_RAM" -ge 1900 ]] && [[ "$AVAILABLE_DISK" -ge 10 ]]; then
         PANELS["easypanel"]="Easypanel|min: 1 Core, 2GB RAM, 10GB Disk|Multi-OS (Docker)"
         PANEL_TYPE["easypanel"]="free"
     fi
