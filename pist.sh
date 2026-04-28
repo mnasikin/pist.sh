@@ -21,7 +21,7 @@ print_banner() {
     clear
     echo -e "${CYAN}"
     echo "╔════════════════════════════════════════════════════════════╗"
-    echo "║      pist.sh — VPS Control Panel Auto Installer v1.3      ║"
+    echo "║      pist.sh — VPS Control Panel Auto Installer v1.4      ║"
     echo "║     One Script, Multiple Panels — Quick & Normal Mode     ║"
     echo "║     Repository: https://github.com/mnasikin/pist.sh       ║"
     echo "╚════════════════════════════════════════════════════════════╝"
@@ -1069,7 +1069,11 @@ main() {
 
         echo -e "\n${CYAN}Selected panel: $name${NC}"
 
-        choose_install_mode "$name"
+        if [[ "$SELECTED_PANEL" == "pterodactyl" ]]; then
+            INSTALL_MODE="normal"
+        else
+            choose_install_mode "$name"
+        fi
 
         echo -e "${GREEN}╔════════════════════════════════════════════════════════════╗"
         echo -e "║                  INSTALLATION SUMMARY                      ║"
