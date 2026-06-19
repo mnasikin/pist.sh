@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# pist.sh - VPS Control Panel Auto Installer v1.2
+# pist.sh - VPS Control Panel Auto Installer v1.5
 # Supports Quick Mode (non-interactive) and Normal Mode (interactive)
 
 RED='\033[0;31m'
@@ -16,12 +16,38 @@ INSTALL_MODE=""
 DETECTED_PANELS=()
 IS_FRESH=true
 PANEL_FILTER=""   # "free", "paid", or "all"
+PTERODACTYL_INSTALLER_SHA256="c5eed11256be1f8bf155f291f77f32dabc514dab4c10698125e7fd8fe50441a2"
+
+download_and_verify() {
+    local url="$1"
+    local destination="$2"
+    local expected_sha256="$3"
+    local actual_sha256
+
+    echo -e "${BLUE}[INFO] Downloading ${destination}...${NC}"
+    if ! curl --fail --silent --show-error --location "$url" --output "$destination"; then
+        echo -e "${RED}[ERROR] Failed to download ${url}.${NC}"
+        rm -f "$destination"
+        return 1
+    fi
+
+    actual_sha256="$(sha256sum "$destination" | awk '{print $1}')"
+    if [[ "$actual_sha256" != "$expected_sha256" ]]; then
+        echo -e "${RED}[ERROR] Checksum verification failed for ${destination}.${NC}"
+        echo -e "${RED}        Expected: ${expected_sha256}${NC}"
+        echo -e "${RED}        Actual  : ${actual_sha256}${NC}"
+        rm -f "$destination"
+        return 1
+    fi
+
+    echo -e "${GREEN}[OK] SHA-256 checksum verified for ${destination}.${NC}"
+}
 
 print_banner() {
     clear
     echo -e "${CYAN}"
     echo "╔════════════════════════════════════════════════════════════╗"
-    echo "║      pist.sh — VPS Control Panel Auto Installer v1.4      ║"
+    echo "║      pist.sh — VPS Control Panel Auto Installer v1.5      ║"
     echo "║     One Script, Multiple Panels — Quick & Normal Mode     ║"
     echo "║     Repository: https://github.com/mnasikin/pist.sh       ║"
     echo "╚════════════════════════════════════════════════════════════╝"
@@ -925,8 +951,10 @@ install_pterodactyl() {
         return 1
     fi
 
-    echo -e "${BLUE}[INFO] Downloading Pterodactyl installer...${NC}"
-    curl -fsSL "$installer_url" -o "$installer_path"
+    download_and_verify \
+        "$installer_url" \
+        "$installer_path" \
+        "$PTERODACTYL_INSTALLER_SHA256" || return 1
     chmod +x "$installer_path"
     bash "$installer_path"
 }

@@ -96,7 +96,7 @@ print_banner() {
   clear
   echo -e "${CYAN}"
   echo "╔════════════════════════════════════════════════════════════╗"
-  echo "║    Pterodactyl Panel + Wings Installer for pist.sh v1.4    ║"
+  echo "║    Pterodactyl Panel + Wings Installer for pist.sh v1.5    ║"
   echo "║        Interactive Setup for Supported Debian/Ubuntu       ║"
   echo "║     Repository: https://github.com/mnasikin/pist.sh        ║"
   echo "╚════════════════════════════════════════════════════════════╝"
